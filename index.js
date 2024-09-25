@@ -334,33 +334,30 @@ app.post('/api/cart/remove', async (req, res) => {
 
 app.post('/api/cart/checkout', async (req, res) => {
   try {
-    // Fetch the cart and populate product details
+   
     const cart = await Cart.findOne({}).populate('products.product');
 
     if (!cart || cart.products.length === 0) {
       return res.status(400).json({ message: 'Cart is empty or not found' });
     }
 
-    // Calculate total amount
+  
     const totalAmount = cart.products.reduce((total, item) => {
       return total + item.quantity * item.product.currentPrice;
     }, 0);
 
-    // Create a payment intent with Stripe
+    
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: totalAmount * 100, // Convert amount to cents
-      currency: 'usd', // Use the desired currency
+      amount: totalAmount * 100, 
+      currency: 'usd', 
     });
 
-    // Here, you should send the client secret back to the frontend
     res.status(200).json({ 
       message: 'Payment intent created', 
-      clientSecret: paymentIntent.client_secret, // Send the client secret to the frontend
+      clientSecret: paymentIntent.client_secret, 
       totalAmount 
     });
 
-    // If payment is successful (handled on the frontend), clear the cart
-    // You should implement a webhook to listen for payment success events and clear the cart there
   } catch (error) {
     console.error("Error during checkout:", error);
     res.status(500).json({ message: 'Server error' });
