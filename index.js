@@ -87,7 +87,11 @@ const Cart = mongoose.model('Cart', cartSchema);
 
 const seedProducts = async () => {
   try {
-    await Product.deleteMany({});
+    const productCount = await Product.countDocuments(); // Check if there are already products in the database
+    if (productCount > 0) {
+      console.log('Products already seeded, skipping seeding.');
+      return;
+    }
 
     const initialProducts = [
       {
@@ -185,7 +189,6 @@ const seedProducts = async () => {
       }
     ];
 
-  
     await Product.insertMany(initialProducts);
     console.log('Products seeded to database');
   } catch (error) {
@@ -194,6 +197,7 @@ const seedProducts = async () => {
 };
 
 seedProducts();
+
 
 app.get('/api/products', async (req, res) => {
   try {
