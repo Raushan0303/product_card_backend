@@ -217,7 +217,7 @@ app.get('/api/products/:id', async (req, res) => {
     }
   });
 
-  // add to cart route
+// add to cart route
 
 app.post('/api/cart/add', async (req, res) => {
   try {
